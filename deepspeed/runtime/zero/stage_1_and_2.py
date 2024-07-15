@@ -356,7 +356,11 @@ class DeepSpeedZeroOptimizer(ZeROOptimizer):
 
             # free temp CPU params
             for param in self.bit16_groups[i]:
-                del param.cpu_data
+                try:
+                    if hasattr(param, 'cpu_data'):
+                        del param.cpu_data
+                except AttributeError as err:
+                    print(type(err),"---",err,"---",err.args)
 
             # Move CPU flat tensor to the accelerator memory.
             self.bit16_groups_flat.append(flattened_buffer.to(get_accelerator().current_device_name()))
