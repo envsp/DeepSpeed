@@ -315,7 +315,7 @@ class DeepSpeedZeroOptimizer(ZeROOptimizer):
             # not sure why apex was cloning the weights before flattening
             # removing cloning here
 
-            see_memory_usage(f"Before moving param group {i} to CPU")
+            see_memory_usage(f"Before moving param group {i} to CPU", force=True)
             # move all the parameters to cpu to free up GPU space for creating flat buffer
 
             # Create temp CPU param copies, free accelerator tensors
@@ -326,7 +326,7 @@ class DeepSpeedZeroOptimizer(ZeROOptimizer):
                 param.data = torch.empty(1).to(param.device)
 
             empty_cache()
-            see_memory_usage(f"After moving param group {i} to CPU", force=False)
+            see_memory_usage(f"After moving param group {i} to CPU", force=True)
 
             # Reorder group parameters for load balancing of gradient partitioning during backward among ranks.
             # This ensures that gradients are reduced in a fashion such that ownership round robins among the ranks.
